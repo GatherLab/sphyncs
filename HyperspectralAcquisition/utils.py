@@ -86,14 +86,16 @@ def fitSpectrumWL(spec, wL,tol, tol2, height):
     peaks, props=find_peaks(spec, distance=tol2, height=height)
     heights=props['peak_heights']
     peakFit=[]
+    heightsCorr=[]
     for i in range(len(peaks)):
         peak=peaks[i]
         try:
             popt, pcov = curve_fit(gaussian, wL[math.floor(peak)-tol:math.ceil(peak)+tol], spec[math.floor(peak)-tol:math.ceil(peak)+tol], p0=[250, 0.1, wL[peak], 4])
             peakFit.append(popt[2])  
+            heightsCorr.append(popt[0])
         except:
             popt=[-1, -1, -1, -1] #fit failed
-    return peakFit, heights
+    return peakFit, heightsCorr
 
 def construct2D(path, xdim, ydim, xaxis, s1, s2, threshold=20, specImg=True):
     data=imageio.imread(path)

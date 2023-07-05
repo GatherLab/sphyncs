@@ -227,6 +227,25 @@ class acquisition:
                                 frameOutput.append(peaks[0:noPeaks+3])
                 np.savetxt(self.directory+'fitted\\Fit_t{}_z{}_'.format(t, z)+self.name+'.txt', np.transpose(np.array(frameOutput)))
                 
+                
+    def fitSpectraToFilesASC(self, tol=100, tol2=100, height=10, thresh=70, noPeaks=4, t0=0, t1=None, z0=0, z1=None, plot=False):
+        if t0==None: t0=1
+        if t1==None: t1=self.tDim+1
+        if z1==None: z1=self.zDim
+        rawDat=np.loadtxt(self.directory+self.name)
+        frameOutput=[]
+        for t in range(t0, t1):
+            spec=rawDat[:,t]
+            if max(spec)>thresh:
+                peaks, heights=self.fitSpectrum(spec, tol=tol, tol2=tol2, height=height, plot=plot)
+                #peaks2=sorted(peaks[0:noPeaks])
+                if len(peaks)>=noPeaks:   
+                    peaks.insert(0, t-1)
+                    peaks.insert(1, t-1)
+                    peaks.insert(2, max(heights))
+                    frameOutput.append(peaks[0:noPeaks+3])
+        np.savetxt(self.directory+'fitted\\Fit_t{}_z{}_'.format(0, 0)+self.name+'.txt', np.transpose(np.array(frameOutput)))
+
     def fitSinglePeaks(self, thresh=25, show=True):
         output=[]
         if show:
@@ -318,22 +337,37 @@ class acquisition:
                         elif param=='peak':
                             outputMap[t][z][x][y]=result[-6]
                             iMap[t][z][x][y]=result[-5]
-                '''
-                else:
-                    try:
-                        if not fitted or np.abs(results[-1])<maxRes:
-                            x=int(results[0])
-                            y=int(results[1])
-                            I=results[2]
-                            iMap[t][z][x][y]=I
-                            if param=='n':
-                                outputMap[t][z][x][y]=results[-2]
-                            elif param=='peak':
-                                outputMap[t][z][x][y]=result[-6]
-                                iMap[t][z][x][y]=result[-5]
-                            elif param=='d':
-                                outputMap[t][z][x][y]=results[-3]
-                    except:
-                        print(results, 'could not be fitted', sep=' ')
-                   '''
-        return outputMap, iMap           
+        return outputMap, iMap        
+    
+    def ResultsFromFilesASC(self, maxRes=10**(-11), param='n', t0=0, t1=None, z0=0, z1=None, fitted=True):
+        if t1==None: t1=self.tDim
+        if z1==None: z1=self.zDim
+        outputMap=np.zeros(self.tDim)
+        iMap=np.zeros(self.tDim)
+        for t in range(t0, t1):
+            for z in range(z0, z1):
+                try:
+                    if fitted: results=np.transpose(np.loadtxt(self.directory+'fitted\\AE_Fit_t{}_z{}_'.format(t, z)+self.name+'.txt'))
+                    if not fitted: results=np.transpose(np.loadtxt(self.directory+'fitted\\Fit_t{}_z{}_'.format(t, z)+self.name+'.txt'))
+                except:
+                    print('Fit_t{}_z{}_'.format(t, z)+self.name+' could not be read')
+                if len(np.shape(results))==1:
+                    results=[results]
+                for result in results:
+                    if not fitted or np.abs(result[-1])<maxRes:
+                        t=int(result[1])
+                        I=result[2]
+                        iMap[t]=I
+                        if not fitted:
+                            outputMap[t]=result[3]
+                        elif param=='n':
+                            outputMap[t]=result[-2]
+                        elif param=='d':
+                            outputMap[t]=result[-3]
+                        elif param=='peak':
+                            outputMap[t]=result[-6]
+                            iMap[t]=result[-5]
+                        if param=='peak' and not fitted:
+                            outputMap[t]=result[-2]
+                            iMap[t]=result[-1]
+        return outputMap, iMap   
