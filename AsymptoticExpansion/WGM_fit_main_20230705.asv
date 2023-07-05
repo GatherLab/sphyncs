@@ -1,0 +1,87 @@
+workdir =cd; 
+folder= 'D:\code new version';
+addpath(workdir);
+cd(folder)
+myfiles = dir ('Fit_t*');
+
+for i=1: length(myfiles)
+    
+    data(i).name =myfiles(i).name;
+    data(i).rawdata = importdata(data(i).name);
+    data(i).total_spec = data(i).rawdata(4:end,:).';
+    data(i).spec= data(i).total_spec; %must be even number of peaks for fitting
+    
+end
+
+
+%% Check data spectra ordering
+for i = 1: length(myfiles)
+    test = data(i).spec;
+    if test(1,1)> test(1,2)
+        i;
+        disp ('have flipped spectra')
+        data(i).spec= flip( data(i).total_spec(:,1:4),2);
+    end
+end
+
+
+%% Parameterspace
+%known
+n_bead = 1.569771879433120;%fixed bead diameter (found experimentally for Red microparticles 12-04-2023)
+np =100;% # initial guesses
+
+%unknown initial guess
+n_ext = [1.330 1.40]; 
+d_bead = [15 18]; % in um 
+
+% estimating mode number range
+modes = [90 160]; 
+
+%% FITTING SECTION
+% calls fit_peaks- minimisation algorithm calls spectral_peaks which
+% generates the modes using wgm_schiller
+tic
+for i=1:length(data)
+    clear SPECTRA fit_diam fit_ref fit_err
+    %prealocate size 
+    fit_diam = zeros(1,length(data(i).spec));
+    fit_ref = zeros(1,length(data(i).spec));
+    fit_err = zeros(1,length(data(i).spec));
+    
+    SPECTRA = data(i).spec;
+    fprintf("Fitted: %i of %i\n", i, length(data)); %counts files
+    for s = 1:size(SPECTRA, 1)
+        if any(SPECTRA(s,:)<=0) % checks for unsucessful fitted spectra and returns fits = -1
+            fit_diam(s) = -1;
+            fit_ref(s) = -1;
+            fit_err(s) = -1;
+            
+        else
+            %fprintf("Fitted: %i of %i\n", s, size(SPECTRA, 1)); %counts spectra per file
+            [te_pks, tm_pks] =te_or_tm(SPECTRA(s,:));
+            Modestart = tm_pks(1)<te_pks(1);
+            [p, estimated_peaks] = fit_peaks(SPECTRA(s, :),n_ext,d_bead,modes,n_bead,Modestart,np);
+            fit_diam(s) = p{3} * 2;
+            fit_ref(s) = p{2};
+            measured_peaks = SPECTRA(s, :);
+            fit_err(s) = sum(abs(measured_peaks - estimated_peaks))*10^-9;
+            
+            
+        end
+        
+    end
+    data(i).diam = fit_diam;
+    data(i).ref = fit_ref;
+    data(i).err = fit_err;
+    data(i).rawdata = [data(i).rawdata; data(i).diam];
+    data(i).rawdata = [data(i).rawdata; data(i).ref];
+    data(i).rawdata = [data(i).rawdata; data(i).err];
+    
+    
+    writematrix(data(i).rawdata,['AE_' data(i).name],'Delimiter',' ' )
+    
+    
+end
+toc
+%%
+
