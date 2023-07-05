@@ -37,6 +37,7 @@ class acquisition:
         self.yDim=int(acqParams[-10].split('\t')[0])
         self.zDim=int(acqParams[-7].split('\t')[0])
         self.tDim=(len(acqParams)-16)//self.zDim
+        if self.tDim==0: self.tDim=1
         nullDat=imageio.imread(utils.formatString(self.directory, self.name, 0))
         self.wLDim=len(nullDat[0])
         self.xStep=FOV50/100*(int(acqParams[-14].split('\t')[0])-int(acqParams[-16].split('\t')[0]))/self.xDim
