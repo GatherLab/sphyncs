@@ -25,10 +25,10 @@ Open the Demo Jupyter Notebooks and the MATLAB script and update the directory i
 The code can now be run, reproducing the results published in the protocol 'Hyperspectral Confocal Imaging for High-Throughput Readout and Analysis of Bio-Integrated Laser Particles'.
 The expected results are also displayed as graphics in the original Demo notebooks. Note that due to file size limits, only the partial data set corresponding to SI Code 3 was uploaded.
 Approximate Demo Runtimes:
-SI Code 1: <1h
+SI Code 1: 3 min
 SI Code 2: 8h
 SI Code 3: 3h
-SI Code 4: <1h
+SI Code 4: < 1 min
 
 Instructions for Use
 Replace the directory, data set name, and log file name by references to your own data.
