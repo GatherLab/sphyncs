@@ -15,7 +15,7 @@ No additional non-standard hardware is required to runour processing functions.
 Installation guide
 
 MATLAB: Download and install MATLAB and enter the licensing information. Open MATLAB and navigate to 'Environments' to install add-ons (dependencies).
-Installing MATLAB and all dependencies will take <6 hours.
+Installing MATLAB and all dependencies will take approximately 30 minutes.
 
 Python: We recommend using the Anaconda distribution, which can be downloaded from the Anaconda website.
 Addtional packages (dependencies) can be viewed, updated, or installed under 'Environments' in the Anaconda Navigator, or directly from the anaconda prompt.
