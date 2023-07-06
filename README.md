@@ -7,7 +7,7 @@ Custom hardware control code is available upon request due to licensing requirem
 
 System requirements: The software packages have been tested on Windows 10.x, using MATLAB R2021a or R2023a, and Python 3.9.13.
 
-MATLAB dependencies: Parallel computing toolbox, global optimization toolbox, optimization toolbox
+MATLAB dependencies: Parallel computing toolbox 7.4, global optimization toolbox 4.5, optimization toolbox 9.1
 
 Python dependencies: pandas 1.4.4, numpy 1.21.5, scipy 1.9.1, matplotlib 3.5.2, imageio 2.19.3, napari 0.4.17, pims 0.6.1, trackpy 0.6.1
 No additional non-standard hardware is required to runour processing functions.
