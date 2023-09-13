@@ -1,4 +1,4 @@
-# sphyncs
+# sphyncs <a href="https://doi.org/10.5281/zenodo.8121135"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.8121135.svg" alt="DOI"></a>
 Software for Processing Hyperspectral Confocal Scans of Laser Particles
 
 This software package contains the Python package for processing hyperspectral confocal datasets, 
