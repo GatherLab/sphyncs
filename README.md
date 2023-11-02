@@ -1,4 +1,4 @@
-# sphyncs
+# sphyncs <a href="https://doi.org/10.5281/zenodo.8121135"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.8121135.svg" alt="DOI"></a>
 Software for Processing Hyperspectral Confocal Scans of Laser Particles
 
 This software package contains the Python package for processing hyperspectral confocal datasets, 
@@ -31,3 +31,6 @@ Approximate Demo Runtimes: // SI Code 1: 3 min // SI Code 2: < 1 hour (Python) +
 Instructions for Use: Replace the directory, data set name, and log file name by references to your own data.
 For optimal results, the keyword arguments of the processing and fitting functions may require updating.
 Refer to the Supplementary Information of the protocol 'Hyperspectral Confocal Imaging for High-Throughput Readout and Analysis of Bio-Integrated Laser Particles' for more details.
+
+Please cite as
+Vera M Titze, Soraya Caixeiro, Marcel Schubert, & Malte C Gather. (2023). GatherLab/sphyncs: v0.0.1-alpha.1 (v0.0.1-alpha). Zenodo. https://doi.org/10.5281/zenodo.8121135
