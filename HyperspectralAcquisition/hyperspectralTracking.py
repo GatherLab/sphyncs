@@ -166,3 +166,62 @@ class trackDataND:
         plt.yticks([])
         plt.savefig(path)
         plt.show()
+        
+class trackData2D:    
+    def __init__(self, linkedD, acq, nBin=[1,1],name='A0-'):#, xaxis=np.linspace(719.95, 681.43, 150), dim=[375, 375, 40, 48]):
+        self.disks={}
+        self.xdim=acq.xDim
+        self.ydim=acq.yDim
+        self.zdim=acq.zDim
+        self.timesteps=acq.tDim*acq.tStep    
+        self.nBin=nBin
+        for i in range(len(linkedD)):
+            if type(linkedD)==np.ndarray:
+            #construction from processed array
+                part=linkedD[i][0]
+                x=linkedD[i, 0*self.timesteps+1:1*self.timesteps+1]        
+                y=linkedD[i, 1*self.timesteps+1:2*self.timesteps+1]   
+                t=linkedD[i, 3*self.timesteps+1:4*self.timesteps+1]
+                self.disks[part]=disk(dim[3], part)
+                (self.disks[part].x)=x
+                (self.disks[part].y)=y     
+                (self.disks[part].t)=t
+            elif type(linkedD)==pd.core.frame.DataFrame:
+            #construction from tracking dataframe
+                part=name+str(linkedD.at[i, 'particle'])
+                x=linkedD.at[i, 'x']        
+                y=linkedD.at[i, 'y']    
+                t=linkedD.at[i, 'frame']
+                if (part in self.disks.keys()):
+                    (self.disks[part].x)[t]=x
+                    (self.disks[part].y)[t]=y  
+                    (self.disks[part].z)[t]=0            
+                else:
+                    self.disks[part]=disk(acq.tDim, part, acq.tStep)
+                    (self.disks[part].x)[t]=x
+                    (self.disks[part].y)[t]=y   
+                    (self.disks[part].z)[t]=0       
+                
+    def mergeWith(self, disks2):
+        for key in disks2.disks:
+            self.disks[key]=disks2.disks[key]
+            
+    def fitAllDisks(self, LPsize=[1,3,3], plot0=True, minLen=30, thresh=20):
+        for key in self.disks:
+            xval=list(filter(lambda num: num != 0, self.disks[key].x))
+            if len(xval)>minLen:
+                self.disks[key].fitAllWL(self.xdim, self.zdim, self.timesteps, LPsize=[1,3,3], plot=plot0, thresh=thresh)
+            
+    def plotTrajs(self, acq, minLen=47, leg=False, colorCode='wL' , path='temp.png', nBin=[1,1]):
+        count=0
+        plt.figure(figsize=(5, 5))
+        for key in self.disks:
+            xval=list(filter(lambda num: num != 0, self.disks[key].x))
+            if len(xval)>minLen:
+                (self.disks[key]).plotXY(acq, colorCode=colorCode)
+        plt.xlim(0, acq.xDim/nBin[0])
+        plt.ylim(0, acq.yDim/nBin[1]) 
+        plt.xticks([])
+        plt.yticks([])
+        plt.savefig(path)
+        plt.show()
